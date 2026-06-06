@@ -5,8 +5,20 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("warrant")
     .setDescription("Create warrant")
-    .addUserOption(o => o.setName("user").setRequired(true))
-    .addStringOption(o => o.setName("reason").setRequired(true)),
+
+    .addUserOption(o =>
+      o
+        .setName("user")
+        .setDescription("Target user") // REQUIRED
+        .setRequired(true)
+    )
+
+    .addStringOption(o =>
+      o
+        .setName("reason")
+        .setDescription("Reason for warrant") // REQUIRED
+        .setRequired(true)
+    ),
 
   async execute(interaction) {
     const data = db.load();
