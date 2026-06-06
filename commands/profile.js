@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const db = require("../db");
 
 module.exports = {
@@ -10,17 +10,30 @@ module.exports = {
     const data = db.load();
     const id = interaction.user.id;
 
-    const vehicles = data.vehicles[id] || [];
-    const warrants = data.warrants[id] || [];
+    const vehicles = data.vehicles?.[id] || [];
+    const warrants = data.warrants?.[id] || [];
+    const tickets = data.tickets?.[id] || [];
 
     const embed = new EmbedBuilder()
-      .setTitle(`Profile - ${interaction.user.username}`)
+      .setTitle(`RP Profile - ${interaction.user.username}`)
       .setColor(0x89CFF0)
-      .addFields(
-        { name: "Vehicles", value: vehicles.length ? vehicles.map(v => `${v.brand} ${v.model}`).join("\n") : "None" },
-        { name: "Warrants", value: warrants.length ? warrants.join("\n") : "None" }
-      );
+      .setDescription("Select a category below to view details.");
 
-    await interaction.reply({ embeds: [embed] });
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId("profile_tickets_warrants")
+        .setLabel("Tickets & Warrants")
+        .setStyle(ButtonStyle.Primary),
+
+      new ButtonBuilder()
+        .setCustomId("profile_vehicles")
+        .setLabel("Registrations & Plates")
+        .setStyle(ButtonStyle.Secondary)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row]
+    });
   }
 };
