@@ -1,22 +1,15 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const db = require("../db");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("plate")
     .setDescription("Create or assign plates")
-
     .addStringOption(o =>
-      o
-        .setName("number")
-        .setDescription("Plate number")
-        .setRequired(true)
+      o.setName("number").setRequired(true)
     )
-
     .addStringOption(o =>
-      o
-        .setName("action")
-        .setDescription("Create or assign a plate")
+      o.setName("action")
         .setRequired(true)
         .addChoices(
           { name: "Create", value: "create" },
@@ -26,23 +19,39 @@ module.exports = {
 
   async execute(interaction) {
     const data = db.load();
+    if (!data.plates) data.plates = {};
 
     const number = interaction.options.getString("number");
     const action = interaction.options.getString("action");
 
-    if (!data.plates[number]) {
-      data.plates[number] = { owner: null };
+    if (action === "create") {
+      if (data.plates[number]) {
+        return interaction.reply({ content: "❌ Plate already exists.", ephemeral: true });
+      }
+
+      data.plates[number] = {
+        owner: null,
+        createdBy: interaction.user.id
+      };
+
+      db.save(data);
+
+      return interaction.reply(`🪪 Plate **${number}** created.`);
     }
 
     if (action === "assign") {
+      if (!data.plates[number]) {
+        return interaction.reply({ content: "❌ Plate does not exist.", ephemeral: true });
+      }
+
+      if (data.plates[number].owner) {
+        return interaction.reply({ content: "❌ Plate already assigned.", ephemeral: true });
+      }
+
       data.plates[number].owner = interaction.user.id;
       db.save(data);
-      return interaction.reply("🪪 Plate assigned!");
-    }
 
-    if (action === "create") {
-      db.save(data);
-      return interaction.reply("🪪 Plate created!");
+      return interaction.reply(`🪪 Plate **${number}** assigned to you.`);
     }
   }
 };
