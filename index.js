@@ -1,38 +1,37 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits } = require("discord.js");
+const fs = require("fs");
+const { Client, GatewayIntentBits, Collection } = require("discord.js");
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
+client.commands = new Collection();
+
+// LOAD COMMANDS
+const commandFiles = fs.readdirSync("./commands").filter(f => f.endsWith(".js"));
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.data.name, command);
+}
+
 client.once("ready", () => {
-  console.log(`🚔 Greenville Community Luxury Online`);
+  console.log("🚔 Greenville Community Luxury Online");
 });
 
+// INTERACTION HANDLER
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  // /startup
-  if (interaction.commandName === "startup") {
-    await interaction.reply({
-      embeds: [
-        {
-          title: "Greenville Community Luxury ™",
-          description:
-`> A session is now being hosted by ${interaction.user}
+  const command = client.commands.get(interaction.commandName);
+  if (!command) return;
 
-Please ensure you have read #server-information and follow all RP rules.
-
--# Variable+ reactions required to start session.`,
-          color: 0x89CFF0
-        }
-      ]
-    });
-  }
-
-  // /work
-  if (interaction.commandName === "work") {
-    await interaction.reply("💰 You earned $500 RP money!");
+  try {
+    await command.execute(interaction);
+  } catch (err) {
+    console.error(err);
+    await interaction.reply({ content: "Error executing command", ephemeral: true });
   }
 });
 
