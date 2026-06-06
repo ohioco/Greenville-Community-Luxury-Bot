@@ -3,8 +3,9 @@ const db = require("./db");
 const platesFile = "./database/plates.json";
 const vehiclesFile = "./database/vehicles.json";
 
+// CREATE PLATE
 function createPlate(id, number, state) {
-  let plates = db.read(platesFile);
+  const plates = db.load(platesFile);
 
   plates[id] = {
     number,
@@ -13,59 +14,75 @@ function createPlate(id, number, state) {
     status: "active"
   };
 
-  db.write(platesFile, plates);
-  return "Plate created";
+  db.save(platesFile, plates);
+  return "🪪 Plate created";
 }
 
+// ASSIGN PLATE (SAFE REASSIGN)
 function assignPlate(plateId, vehicleId) {
-  let plates = db.read(platesFile);
-  let vehicles = db.read(vehiclesFile);
+  const plates = db.load(platesFile);
+  const vehicles = db.load(vehiclesFile);
 
-  if (!plates[plateId] || !vehicles[vehicleId])
-    return "Invalid plate or vehicle";
-
-  // remove old assignment
-  if (plates[plateId].assignedVehicle) {
-    vehicles[plates[plateId].assignedVehicle].plateId = null;
+  if (!plates[plateId] || !vehicles[vehicleId]) {
+    return "❌ Invalid plate or vehicle";
   }
 
+  // remove old link if exists
+  if (plates[plateId].assignedVehicle) {
+    const oldVeh = plates[plateId].assignedVehicle;
+    if (vehicles[oldVeh]) {
+      vehicles[oldVeh].plateId = null;
+    }
+  }
+
+  // assign new
   plates[plateId].assignedVehicle = vehicleId;
   vehicles[vehicleId].plateId = plateId;
 
-  db.write(platesFile, plates);
-  db.write(vehiclesFile, vehicles);
+  db.save(platesFile, plates);
+  db.save(vehiclesFile, vehicles);
 
-  return "Plate assigned";
+  return "🔗 Plate assigned successfully";
 }
 
+// UNASSIGN
 function unassignPlate(plateId) {
-  let plates = db.read(platesFile);
-  let vehicles = db.read(vehiclesFile);
+  const plates = db.load(platesFile);
+  const vehicles = db.load(vehiclesFile);
 
-  if (!plates[plateId]) return "Plate not found";
+  if (!plates[plateId]) return "❌ Plate not found";
 
-  let veh = plates[plateId].assignedVehicle;
-  if (veh && vehicles[veh]) vehicles[veh].plateId = null;
+  const veh = plates[plateId].assignedVehicle;
+
+  if (veh && vehicles[veh]) {
+    vehicles[veh].plateId = null;
+  }
 
   plates[plateId].assignedVehicle = null;
 
-  db.write(platesFile, plates);
-  db.write(vehiclesFile, vehicles);
+  db.save(platesFile, plates);
+  db.save(vehiclesFile, vehicles);
 
-  return "Plate unassigned";
+  return "❌ Plate unassigned";
 }
 
+// INFO
 function plateInfo(id) {
-  let plates = db.read(platesFile);
-  let vehicles = db.read(vehiclesFile);
+  const plates = db.load(platesFile);
+  const vehicles = db.load(vehiclesFile);
 
-  let p = plates[id];
-  if (!p) return null;
+  const plate = plates[id];
+  if (!plate) return null;
 
   return {
-    ...p,
-    vehicle: p.assignedVehicle ? vehicles[p.assignedVehicle] : null
+    ...plate,
+    vehicle: plate.assignedVehicle ? vehicles[plate.assignedVehicle] : null
   };
 }
 
-module.exports = { createPlate, assignPlate, unassignPlate, plateInfo };
+module.exports = {
+  createPlate,
+  assignPlate,
+  unassignPlate,
+  plateInfo
+};
