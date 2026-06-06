@@ -5,8 +5,24 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("plate")
     .setDescription("Create or assign plates")
-    .addStringOption(o => o.setName("number").setRequired(true))
-    .addStringOption(o => o.setName("action").setRequired(true)),
+
+    .addStringOption(o =>
+      o
+        .setName("number")
+        .setDescription("Plate number")
+        .setRequired(true)
+    )
+
+    .addStringOption(o =>
+      o
+        .setName("action")
+        .setDescription("Create or assign a plate")
+        .setRequired(true)
+        .addChoices(
+          { name: "Create", value: "create" },
+          { name: "Assign", value: "assign" }
+        )
+    ),
 
   async execute(interaction) {
     const data = db.load();
