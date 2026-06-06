@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
+const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,10 +16,10 @@ module.exports = {
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
       : interaction.user.toString();
-    const coHost = interaction.client.sessionCoHost
+    const coHostLine = interaction.client.sessionCoHost
       ? `\n➜ **Co-Host:** <@${interaction.client.sessionCoHost}>` : "";
 
-    // Clear session state
+    // Clear all session state
     interaction.client.sessionHost      = null;
     interaction.client.sessionCoHost    = null;
     interaction.client.sessionLink      = null;
@@ -30,16 +31,16 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Ended 🔴")
+      .setColor(BABY_BLUE)
       .setDescription(
 `<@&1508054312075526204>
 
-➜ The session hosted by **${host}** has now ended. Thank you for participating!${coHost}
+➜ The session hosted by **${host}** has now ended. Thank you for participating!${coHostLine}
 
 ➜ We hope to see you in the next session. Stay safe and have a great day!
 
 -# Keep an eye out for future session announcements.`
       )
-      .setColor(0xFF5555)
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 

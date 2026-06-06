@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
+const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,9 +29,9 @@ module.exports = {
         .setDescription("Peacetime status")
         .setRequired(true)
         .addChoices(
-          { name: "Active",  value: "🟢 Active"  },
-          { name: "Strict",  value: "🟡 Strict"  },
-          { name: "Off",     value: "🔴 Off"      }
+          { name: "Active", value: "🟢 Active" },
+          { name: "Strict", value: "🟡 Strict" },
+          { name: "Off",    value: "🔴 Off"    }
         )
     )
     .addStringOption(o =>
@@ -53,24 +54,25 @@ module.exports = {
     const peacetime = interaction.options.getString("peacetime");
     const hc        = interaction.options.getString("hc");
 
-    const host = interaction.client.sessionHost
-      ? `<@${interaction.client.sessionHost}>`
-      : interaction.user.toString();
-    const coHost = interaction.client.sessionCoHost
-      ? `\n➜ **Co-Host:** <@${interaction.client.sessionCoHost}>` : "";
-
-    // Save link on client for /reinvites to use
+    // Store on client for /reinvites to reference
     interaction.client.sessionLink      = link;
     interaction.client.sessionFrpSpeed  = frpSpeed;
     interaction.client.sessionPeacetime = peacetime;
     interaction.client.sessionHC        = hc;
 
+    const host = interaction.client.sessionHost
+      ? `<@${interaction.client.sessionHost}>`
+      : interaction.user.toString();
+    const coHostLine = interaction.client.sessionCoHost
+      ? `\n➜ **Co-Host:** <@${interaction.client.sessionCoHost}>` : "";
+
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Released ⭐")
+      .setColor(BABY_BLUE)
       .setDescription(
 `<@&1508054312075526204>
 
-➜ The host, **${host}**, has now released their session! Upon joining the session, please spawn your vehicles & park within the marked bays, and wait for further instructions from the host.${coHost}
+➜ The host, **${host}**, has now released their session! Upon joining the session, please spawn your vehicles & park within the marked bays, and wait for further instructions from the host.${coHostLine}
 
 📋 **| Session Information**
 ➜ Peacetime Status: **${peacetime}**
@@ -79,7 +81,6 @@ module.exports = {
 
 -# Click the button below to access the session link.`
       )
-      .setColor(0x57F287)
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 
@@ -87,7 +88,7 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId(`session_link_${Buffer.from(link).toString("base64")}`)
         .setLabel("🔗 Session Link")
-        .setStyle(ButtonStyle.Success)
+        .setStyle(ButtonStyle.Primary)
     );
 
     await interaction.reply({ embeds: [embed], components: [row] });

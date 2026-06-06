@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
+const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,13 +22,13 @@ module.exports = {
 
     const reactionsNeeded = interaction.options.getInteger("reactions");
 
-    // Store session state globally on the client for other commands to reference
     interaction.client.sessionHost    = interaction.user.id;
     interaction.client.sessionCoHost  = null;
     interaction.client.sessionReactions = reactionsNeeded;
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Startup")
+      .setColor(BABY_BLUE)
       .setDescription(
 `<@&1508054312075526204>
 
@@ -38,7 +39,6 @@ module.exports = {
 -# In order for this session to begin, the host has requested **${reactionsNeeded}+** reactions!
 -# React below to begin session.`
       )
-      .setColor(0x89CFF0)
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
+const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -22,10 +23,11 @@ module.exports = {
 
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
-      : "No host set";
+      : interaction.user.toString();
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Co-Host 💚")
+      .setColor(BABY_BLUE)
       .setDescription(
 `<@&1508054312075526204>
 
@@ -36,7 +38,6 @@ module.exports = {
 
 ➜ If you need support and the host is busy, please redirect to the co-host.`
       )
-      .setColor(0x89CFF0)
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 

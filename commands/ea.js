@@ -7,6 +7,12 @@ const {
 } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
+const BABY_BLUE  = 0x89CFF0;
+
+// Add any extra Early Access role IDs here
+const EA_ROLES = [
+  "1510346654241394848",
+];
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -27,23 +33,23 @@ module.exports = {
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
       : interaction.user.toString();
-    const coHost = interaction.client.sessionCoHost
+    const coHostLine = interaction.client.sessionCoHost
       ? `\n➜ **Co-Host:** <@${interaction.client.sessionCoHost}>` : "";
 
     const embed = new EmbedBuilder()
-      .setTitle("Greenville Community Luxury™ | Early Access")
+      .setTitle("Greenville Community Luxury™ | Early Access ⭐")
+      .setColor(BABY_BLUE)
       .setDescription(
 `<@&1508054312075526204>
 
 ⭐ **Early Access is now open!**
 
-➜ **Host:** ${host}${coHost}
+➜ **Host:** ${host}${coHostLine}
 
 ➜ Staff, Early Access members, Contributors & P/S may now join using the button below. Please allow the host up to **10 minutes** to fully release the session. Do not bother the host during setup.
 
 -# Click the button below to access the Early Access link.`
       )
-      .setColor(0xFFD700)
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 
@@ -51,7 +57,7 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId(`ea_link_${Buffer.from(link).toString("base64")}`)
         .setLabel("🔗 Early Access Link")
-        .setStyle(ButtonStyle.Success)
+        .setStyle(ButtonStyle.Primary)
     );
 
     await interaction.reply({ embeds: [embed], components: [row] });
