@@ -5,10 +5,34 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("vehicle")
     .setDescription("Register a vehicle")
-    .addStringOption(o => o.setName("brand").setRequired(true))
-    .addStringOption(o => o.setName("model").setRequired(true))
-    .addStringOption(o => o.setName("color").setRequired(true))
-    .addStringOption(o => o.setName("plate").setRequired(true)),
+
+    .addStringOption(o =>
+      o
+        .setName("brand")
+        .setDescription("Vehicle brand") // REQUIRED
+        .setRequired(true)
+    )
+
+    .addStringOption(o =>
+      o
+        .setName("model")
+        .setDescription("Vehicle model") // REQUIRED
+        .setRequired(true)
+    )
+
+    .addStringOption(o =>
+      o
+        .setName("color")
+        .setDescription("Vehicle color") // REQUIRED
+        .setRequired(true)
+    )
+
+    .addStringOption(o =>
+      o
+        .setName("plate")
+        .setDescription("Vehicle plate number") // REQUIRED
+        .setRequired(true)
+    ),
 
   async execute(interaction) {
     const data = db.load();
