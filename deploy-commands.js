@@ -23,9 +23,12 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
     console.log("Deploying commands...");
 
     await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, "YOUR_SERVER_ID"),
-      { body: commands }
-    );
+  Routes.applicationGuildCommands(
+    process.env.CLIENT_ID,
+    "1512780159655084112" // your real server ID here
+  ),
+  { body: commands }
+);
 
     console.log("Done!");
   } catch (err) {
