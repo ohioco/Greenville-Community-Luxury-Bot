@@ -20,17 +20,11 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Startup")
       .setDescription(
-`> A session is now being hosted by ${interaction.user}
+' A session is now being hosted by ${interaction.user}! Please ensure that you have read & familiarised yourself with all #server-information and that you abide by these rules within session. Please check to make sure your vehicle isnt a banned vehicle.
 
-Please ensure you have read #server-information and follow all RP rules.
+'-# In order for this session to begin, the host has requested ${reactionsNeeded}+ reactions! 
 
-Please make sure your vehicle is not a banned vehicle.
-
----
-
-Required Reactions: **${reactionsNeeded}+**
-
--# React below to begin session.`
+'-# React below to begin session.`
       )
       .setColor(0x89CFF0);
 
