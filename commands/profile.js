@@ -4,20 +4,16 @@ const db = require("../db");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("profile")
-    .setDescription("View your RP profile"),
+    .setDescription("View RP profile"),
 
   async execute(interaction) {
     const data = db.load();
     const id = interaction.user.id;
 
-    const vehicles = data.vehicles?.[id] || [];
-    const warrants = data.warrants?.[id] || [];
-    const tickets = data.tickets?.[id] || [];
-
     const embed = new EmbedBuilder()
       .setTitle(`RP Profile - ${interaction.user.username}`)
       .setColor(0x89CFF0)
-      .setDescription("Select a category below to view details.");
+      .setDescription("Select a category below.");
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -31,9 +27,6 @@ module.exports = {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    await interaction.reply({
-      embeds: [embed],
-      components: [row]
-    });
+    await interaction.reply({ embeds: [embed], components: [row] });
   }
 };
