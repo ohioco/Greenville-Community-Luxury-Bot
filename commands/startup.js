@@ -19,7 +19,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Session Startup")
-      .setDescription( <@&1508054312075526204>
+      .setDescription( '<@&1508054312075526204>'
 `A session is now being hosted by ${interaction.user}!
 
 Please ensure that you have read & familiarised yourself with all #server-information and that you abide by these rules within session. Please check to make sure your vehicle isn't a banned vehicle.
