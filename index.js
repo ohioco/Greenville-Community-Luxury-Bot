@@ -3,7 +3,7 @@ require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 
 const eco = require("./systems/economy");
-const vehicle = require("./systems/vehicle");
+const vehicle = require("./systems/vehicles");
 const plate = require("./systems/plate");
 const profile = require("./systems/profile");
 const legal = require("./systems/legal");
