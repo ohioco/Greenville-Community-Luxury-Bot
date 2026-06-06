@@ -1,19 +1,38 @@
 const fs = require("fs");
+const path = require("path");
 const { REST, Routes } = require("discord.js");
+
+require("dotenv").config();
 
 const commands = [];
 
-const commandFiles = fs.readdirSync("./commands").filter(f => f.endsWith(".js"));
+const files = fs.readdirSync(path.join(__dirname, "commands"))
+  .filter(f => f.endsWith(".js"));
 
-for (const file of commandFiles) {
-  const cmd = require(`./commands/${file}`);
+for (const file of files) {
+  try {
+    console.log("Loading:", file);
 
-  if (!cmd.data || !cmd.data.toJSON) {
-    console.log(`❌ Skipping broken command: ${file}`);
-    continue;
+    const cmd = require(`./commands/${file}`);
+
+    if (!cmd || !cmd.data || !cmd.data.toJSON) {
+      console.log("❌ SKIPPED INVALID:", file);
+      continue;
+    }
+
+    const json = cmd.data.toJSON();
+
+    if (!json.name || !json.description) {
+      console.log("❌ BAD COMMAND DATA:", file, json);
+      continue;
+    }
+
+    commands.push(json);
+
+  } catch (err) {
+    console.log("❌ CRASH FILE:", file);
+    console.log(err);
   }
-
-  commands.push(cmd.data.toJSON());
 }
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
@@ -23,14 +42,14 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
     console.log("Deploying commands...");
 
     await rest.put(
-  Routes.applicationGuildCommands(
-    process.env.CLIENT_ID,
-    "1512780159655084112" // your real server ID here
-  ),
-  { body: commands }
-);
+      Routes.applicationGuildCommands(
+        process.env.CLIENT_ID,
+        process.env.GUILD_ID
+      ),
+      { body: commands }
+    );
 
-    console.log("Done!");
+    console.log("✅ Done deploying:", commands.length);
   } catch (err) {
     console.error(err);
   }
