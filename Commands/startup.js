@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("startup")
-    .setDescription("Start RP session with reaction requirement")
+    .setDescription("Start Roleplay session with reaction requirement")
     .addIntegerOption(option =>
       option
         .setName("reactions")
