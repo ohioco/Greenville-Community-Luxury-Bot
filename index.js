@@ -8,7 +8,7 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// LOAD COMMANDS
+// ── LOAD COMMANDS ──────────────────────────────────────────────────────────
 const commandFiles = fs.readdirSync("./commands").filter(f => f.endsWith(".js"));
 
 for (const file of commandFiles) {
@@ -16,23 +16,20 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-client.once("ready", () => {
-  console.log("🚔 Greenville Community Luxury Online");
-});
+// ── LOAD EVENTS ────────────────────────────────────────────────────────────
+const eventFiles = fs.readdirSync("./events").filter(f => f.endsWith(".js"));
 
-// INTERACTION HANDLER
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-  if (!command) return;
-
-  try {
-    await command.execute(interaction);
-  } catch (err) {
-    console.error(err);
-    await interaction.reply({ content: "Error executing command", ephemeral: true });
+for (const file of eventFiles) {
+  const event = require(`./events/${file}`);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args, client));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args, client));
   }
+}
+
+client.once("ready", () => {
+  console.log(`🚔 Greenville Community Luxury Online — ${client.user.tag}`);
 });
 
 client.login(process.env.TOKEN);
