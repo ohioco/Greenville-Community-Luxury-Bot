@@ -18,9 +18,7 @@ module.exports = {
       .setTitle("Greenville Community Luxury™ | Member Count")
       .setColor(BABY_BLUE)
       .addFields(
-        { name: "👥 Total",  value: `${total}`, inline: true },
-        { name: "🧑 Members", value: `${human}`, inline: true },
-        { name: "🤖 Bots",   value: `${bots}`,  inline: true }
+        { name: "Total",  value: `${total}`, inline: true },
       )
       .setFooter({ text: "Greenville Community Luxury™" })
       .setTimestamp();
