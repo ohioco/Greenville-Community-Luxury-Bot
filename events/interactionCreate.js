@@ -38,6 +38,18 @@ module.exports = {
     }
 
     // ── BUTTONS ─────────────────────────────────────────────────────────────
+    // ── SELECT MENUS ────────────────────────────────────────────────────────
+    if (interaction.isStringSelectMenu()) {
+      if (interaction.customId === "rules_links") {
+        const links = {
+          tiktok: "https://www.tiktok.com/@gvcl_official?_r=1&_t=ZN-970eRKMAQI2"
+        };
+        const link = links[interaction.values[0]];
+        return interaction.reply({ content: `🔗 ${link}`, ephemeral: true });
+      }
+      return;
+    }
+
     if (!interaction.isButton()) return;
 
     const { customId } = interaction;
