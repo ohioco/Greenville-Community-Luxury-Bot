@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
@@ -55,8 +55,22 @@ Ensure that you follow **[Discord TOS](https://discord.com/terms)** at all times
       .setFooter({ text: "Greenville Community Luxury™ | Server Regulations" })
       .setTimestamp();
 
+    const menu = new ActionRowBuilder().addComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId("rules_links")
+        .setPlaceholder("🔗 Our Pages")
+        .addOptions([
+          {
+            label: "GVCL TikTok Page",
+            description: "This is the official TikTok Page",
+            value: "tiktok",
+            emoji: "🎵"
+          }
+        ])
+    );
+
     await interaction.deferReply({ ephemeral: true });
     await interaction.deleteReply();
-    await interaction.channel.send({ embeds: [embed] });
+    await interaction.channel.send({ embeds: [embed], components: [menu] });
   }
 };
