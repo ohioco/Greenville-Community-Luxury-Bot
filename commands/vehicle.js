@@ -29,7 +29,7 @@ module.exports = {
     const data = db.load();
     if (!data.vehicles) data.vehicles = {};
 
-    // ── REGISTER ──────────────────────────────────────────────────────────────
+    // ── REGISTER ──────────────────────────────────────────────────────────[...]
     if (sub === "register") {
       const id = interaction.user.id;
       if (!data.vehicles[id]) data.vehicles[id] = [];
@@ -64,19 +64,19 @@ module.exports = {
         .setTitle("🚗 Vehicle Registered")
         .setColor(0x89CFF0)
         .addFields(
-         { name: "Year", value: vehicle.Year, inline: true },
+          { name: "Year", value: vehicle.year, inline: true },
           { name: "Brand", value: vehicle.brand, inline: true },
           { name: "Model", value: vehicle.model, inline: true },
           { name: "Color", value: vehicle.color, inline: true },
           { name: "Plate", value: vehicle.plate, inline: true },
-          { name: "Registered", value: `<t:${Math.floor(Date.now()/1000)}:R>`, inline: true }
+          { name: "Registered", value: `<t:${Math.floor(new Date(vehicle.registeredAt).getTime()/1000)}:R>`, inline: true }
         )
         .setFooter({ text: `Vehicle ID: ${vehicle.id}` });
 
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
-    // ── LOOKUP ─────────────────────────────────────────────────────────────────
+    // ── LOOKUP ────────────────────────────────────────────────────────────[...]
     if (sub === "lookup") {
       const plate = interaction.options.getString("plate").toUpperCase();
 
@@ -107,7 +107,7 @@ module.exports = {
         .setTitle(`🔍 Vehicle Lookup — ${plate}`)
         .setColor(0xFFAA00)
         .addFields(
-          { name: "Year",  value: found.Year,  inline: true },
+          { name: "Year",  value: found.year,  inline: true },
           { name: "Brand",  value: found.brand,  inline: true },
           { name: "Model",  value: found.model,  inline: true },
           { name: "Color",  value: found.color,  inline: true },
