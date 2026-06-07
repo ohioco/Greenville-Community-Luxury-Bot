@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 
-const STAFF_ROLE = "1510346654241394848";
+const STAFF_ROLE = "1508564268415713533";
 const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
