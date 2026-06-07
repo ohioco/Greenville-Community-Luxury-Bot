@@ -9,6 +9,7 @@ module.exports = {
       sub
         .setName("register")
         .setDescription("Register a vehicle")
+        .addStringOption(o => o.setName("year").setDescription("Vehicle Year").setRequired(true))
         .addStringOption(o => o.setName("brand").setDescription("Vehicle brand").setRequired(true))
         .addStringOption(o => o.setName("model").setDescription("Vehicle model").setRequired(true))
         .addStringOption(o => o.setName("color").setDescription("Vehicle color").setRequired(true))
@@ -47,6 +48,7 @@ module.exports = {
 
       const vehicle = {
         id: Date.now().toString(),
+        year: interaction.options.getString("year"),
         brand: interaction.options.getString("brand"),
         model: interaction.options.getString("model"),
         color: interaction.options.getString("color"),
@@ -62,6 +64,7 @@ module.exports = {
         .setTitle("🚗 Vehicle Registered")
         .setColor(0x89CFF0)
         .addFields(
+         { name: "Year", value: vehicle.Year, inline: true },
           { name: "Brand", value: vehicle.brand, inline: true },
           { name: "Model", value: vehicle.model, inline: true },
           { name: "Color", value: vehicle.color, inline: true },
@@ -104,6 +107,7 @@ module.exports = {
         .setTitle(`🔍 Vehicle Lookup — ${plate}`)
         .setColor(0xFFAA00)
         .addFields(
+          { name: "Year",  value: found.Year,  inline: true },
           { name: "Brand",  value: found.brand,  inline: true },
           { name: "Model",  value: found.model,  inline: true },
           { name: "Color",  value: found.color,  inline: true },
