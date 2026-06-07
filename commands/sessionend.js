@@ -44,6 +44,8 @@ module.exports = {
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.deleteReply();
+    await interaction.channel.send({ embeds: [embed] });
   }
 };

@@ -85,6 +85,8 @@ module.exports = {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.reply({ embeds: [embed], components: [row] });
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.deleteReply();
+    await interaction.channel.send({ embeds: [embed], components: [row] });
   }
 };

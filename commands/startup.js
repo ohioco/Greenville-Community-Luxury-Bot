@@ -42,7 +42,9 @@ module.exports = {
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
 
-    const message = await interaction.reply({ embeds: [embed], fetchReply: true });
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.deleteReply();
+    const message = await interaction.channel.send({ embeds: [embed] });
     await message.react("✅");
   }
 };
