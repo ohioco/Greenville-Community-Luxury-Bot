@@ -5,13 +5,14 @@ const {
   ButtonBuilder,
   ButtonStyle
 } = require("discord.js");
+const { saveLink } = require("../sessionStore");
 
 const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
 
-// Add any extra Early Access role IDs here
 const EA_ROLES = [
   "1510346654241394848",
+  // Add more EA role IDs here
 ];
 
 module.exports = {
@@ -19,9 +20,7 @@ module.exports = {
     .setName("ea")
     .setDescription("Send Early Access link (Staff only)")
     .addStringOption(o =>
-      o.setName("link")
-        .setDescription("Early Access session link")
-        .setRequired(true)
+      o.setName("link").setDescription("Early Access session link").setRequired(true)
     ),
 
   async execute(interaction) {
@@ -29,7 +28,9 @@ module.exports = {
       return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
     }
 
-    const link = interaction.options.getString("link");
+    const link    = interaction.options.getString("link");
+    const linkKey = saveLink(link);
+
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
       : interaction.user.toString();
@@ -55,7 +56,7 @@ module.exports = {
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`ea_link_${Buffer.from(link).toString("base64")}`)
+        .setCustomId(`ea_link_${linkKey}`)
         .setLabel("🔗 Early Access Link")
         .setStyle(ButtonStyle.Primary)
     );

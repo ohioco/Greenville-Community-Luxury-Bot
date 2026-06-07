@@ -5,6 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle
 } = require("discord.js");
+const { saveLink } = require("../sessionStore");
 
 const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
@@ -14,27 +15,16 @@ module.exports = {
     .setName("reinvites")
     .setDescription("Open reinvites for the session (Staff only)")
     .addStringOption(o =>
-      o.setName("link")
-        .setDescription("New session link for reinvites")
-        .setRequired(true)
+      o.setName("link").setDescription("New session link").setRequired(true)
     )
     .addIntegerOption(o =>
-      o.setName("reactions")
-        .setDescription("Reactions needed before the link is revealed")
-        .setRequired(true)
-        .setMinValue(1)
-        .setMaxValue(100)
+      o.setName("reactions").setDescription("Reactions needed to release the link").setRequired(true).setMinValue(1).setMaxValue(100)
     )
     .addIntegerOption(o =>
-      o.setName("frp_speed")
-        .setDescription("Fail Roleplay speed limit (MPH) — skip if already set via /sessionlink")
-        .setRequired(false)
-        .setMinValue(1)
+      o.setName("frp_speed").setDescription("FRP speed (MPH) — auto-filled if /sessionlink was used").setRequired(false).setMinValue(1)
     )
     .addStringOption(o =>
-      o.setName("peacetime")
-        .setDescription("Peacetime status — skip if already set via /sessionlink")
-        .setRequired(false)
+      o.setName("peacetime").setDescription("Peacetime — auto-filled if /sessionlink was used").setRequired(false)
         .addChoices(
           { name: "Active", value: "🟢 Active" },
           { name: "Strict", value: "🟡 Strict" },
@@ -42,9 +32,7 @@ module.exports = {
         )
     )
     .addStringOption(o =>
-      o.setName("hc")
-        .setDescription("Highway Code — skip if already set via /sessionlink")
-        .setRequired(false)
+      o.setName("hc").setDescription("Highway Code — auto-filled if /sessionlink was used").setRequired(false)
         .addChoices(
           { name: "On",  value: "✅ On"  },
           { name: "Off", value: "❌ Off" }
@@ -58,11 +46,9 @@ module.exports = {
 
     const newLink         = interaction.options.getString("link");
     const reactionsNeeded = interaction.options.getInteger("reactions");
-
-    // Use options provided, fall back to what was stored by /sessionlink, then "N/A"
-    const frpSpeed  = interaction.options.getInteger("frp_speed")   ?? interaction.client.sessionFrpSpeed  ?? null;
-    const peacetime = interaction.options.getString("peacetime")     ?? interaction.client.sessionPeacetime ?? null;
-    const hc        = interaction.options.getString("hc")            ?? interaction.client.sessionHC        ?? null;
+    const frpSpeed        = interaction.options.getInteger("frp_speed")  ?? interaction.client.sessionFrpSpeed  ?? null;
+    const peacetime       = interaction.options.getString("peacetime")    ?? interaction.client.sessionPeacetime ?? null;
+    const hc              = interaction.options.getString("hc")           ?? interaction.client.sessionHC        ?? null;
 
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
@@ -70,11 +56,12 @@ module.exports = {
     const coHostLine = interaction.client.sessionCoHost
       ? `\n➜ **Co-Host:** <@${interaction.client.sessionCoHost}>` : "";
 
-    const frpDisplay  = frpSpeed  ? `**${frpSpeed} MPH**` : "**Not set**";
-    const ptDisplay   = peacetime ?? "**Not set**";
-    const hcDisplay   = hc        ?? "**Not set**";
+    const frpDisplay = frpSpeed  ? `**${frpSpeed} MPH**` : "**Not set**";
+    const ptDisplay  = peacetime ?? "**Not set**";
+    const hcDisplay  = hc       ?? "**Not set**";
 
-    const encodedLink = Buffer.from(newLink).toString("base64");
+    const linkKey = saveLink(newLink);
+    interaction.client.reinviteReleased = false;
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Reinvites Open 🔄")
@@ -93,11 +80,6 @@ module.exports = {
       )
       .setFooter({ text: "Greenville Community Luxury™ | Session Management" })
       .setTimestamp();
-
-    // Save new link on client
-    interaction.client.reinviteLink      = newLink;
-    interaction.client.reinviteReactions = reactionsNeeded;
-    interaction.client.reinviteReleased  = false;
 
     const message = await interaction.reply({ embeds: [embed], fetchReply: true });
     await message.react("✅");
@@ -127,7 +109,7 @@ module.exports = {
 
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
-            .setCustomId(`reinvite_link_${encodedLink}`)
+            .setCustomId(`reinvite_link_${linkKey}`)
             .setLabel("🔗 New Session Link")
             .setStyle(ButtonStyle.Primary)
         );

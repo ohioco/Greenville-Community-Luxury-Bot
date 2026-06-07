@@ -5,6 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle
 } = require("discord.js");
+const { saveLink } = require("../sessionStore");
 
 const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
@@ -14,20 +15,13 @@ module.exports = {
     .setName("sessionlink")
     .setDescription("Release the session link to everyone (Staff only)")
     .addStringOption(o =>
-      o.setName("link")
-        .setDescription("Session link")
-        .setRequired(true)
+      o.setName("link").setDescription("Session link").setRequired(true)
     )
     .addIntegerOption(o =>
-      o.setName("frp_speed")
-        .setDescription("Fail Roleplay speed limit (MPH)")
-        .setRequired(true)
-        .setMinValue(1)
+      o.setName("frp_speed").setDescription("Fail Roleplay speed limit (MPH)").setRequired(true).setMinValue(1)
     )
     .addStringOption(o =>
-      o.setName("peacetime")
-        .setDescription("Peacetime status")
-        .setRequired(true)
+      o.setName("peacetime").setDescription("Peacetime status").setRequired(true)
         .addChoices(
           { name: "Active", value: "🟢 Active" },
           { name: "Strict", value: "🟡 Strict" },
@@ -35,9 +29,7 @@ module.exports = {
         )
     )
     .addStringOption(o =>
-      o.setName("hc")
-        .setDescription("Highway Code enforcement")
-        .setRequired(true)
+      o.setName("hc").setDescription("Highway Code enforcement").setRequired(true)
         .addChoices(
           { name: "On",  value: "✅ On"  },
           { name: "Off", value: "❌ Off" }
@@ -54,11 +46,13 @@ module.exports = {
     const peacetime = interaction.options.getString("peacetime");
     const hc        = interaction.options.getString("hc");
 
-    // Store on client for /reinvites to reference
+    // Store session info for /reinvites
     interaction.client.sessionLink      = link;
     interaction.client.sessionFrpSpeed  = frpSpeed;
     interaction.client.sessionPeacetime = peacetime;
     interaction.client.sessionHC        = hc;
+
+    const linkKey = saveLink(link);
 
     const host = interaction.client.sessionHost
       ? `<@${interaction.client.sessionHost}>`
@@ -86,7 +80,7 @@ module.exports = {
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`session_link_${Buffer.from(link).toString("base64")}`)
+        .setCustomId(`session_link_${linkKey}`)
         .setLabel("🔗 Session Link")
         .setStyle(ButtonStyle.Primary)
     );
