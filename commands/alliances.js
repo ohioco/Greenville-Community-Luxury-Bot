@@ -16,13 +16,11 @@ module.exports = {
     const embed1 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
       .setColor(BABY_BLUE)
-      .setImage("https://i.ibb.co/1w0QyH6/Untitled137-20260531234110.png")
-      .setDescription(" ");
+      .setImage("https://i.ibb.co/1w0QyH6/Untitled137-20260531234110.png");
 
     const embed2 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
       .setColor(BABY_BLUE)
-      .setImage("")
       .setDescription(
 `Welcome to **Greenville Community Luxury's** Server Alliances. Within our server, we strive to support all roleplay communities in their growth and success.
 
