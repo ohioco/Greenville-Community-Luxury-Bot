@@ -58,13 +58,13 @@ Ensure that you follow **[Discord TOS](https://discord.com/terms)** at all times
     const menu = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId("rules_links")
-        .setPlaceholder("🔗 Our Pages")
+        .setPlaceholder("Greenville Community Luxury - Links")
         .addOptions([
           {
             label: "GVCL TikTok Page",
             description: "This is the official TikTok Page",
             value: "tiktok",
-            emoji: "🎵"
+            emoji: "📱"
           }
         ])
     );
