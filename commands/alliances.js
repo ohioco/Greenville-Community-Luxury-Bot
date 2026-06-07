@@ -13,13 +13,13 @@ module.exports = {
       return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
     }
 
-    const embed = new EmbedBuilder()
+    const embed1 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
       .setColor(BABY_BLUE)
       .setImage("https://i.ibb.co/1w0QyH6/Untitled137-20260531234110.png")
-      .setDescription("undefined")
+      .setDescription("First embed description here");
 
-      const embed = new EmbedBuilder()
+    const embed2 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
       .setColor(BABY_BLUE)
       .setImage("https://i.ibb.co/1w0QyH6/Untitled137-20260531234110.png")
@@ -38,6 +38,6 @@ However, before partnering with our server, you must meet our partnership requir
 
     await interaction.deferReply({ ephemeral: true });
     await interaction.deleteReply();
-    await interaction.channel.send({ embeds: [embed] });
+    await interaction.channel.send({ embeds: [embed1, embed2] });
   }
 };
