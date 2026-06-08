@@ -8,7 +8,7 @@ const db = require("../db");
 const { getLink } = require("../sessionStore");
 
 const EA_ROLES = [
-  "1510346654241394848","1513400692822507621"
+  "1510346654241394848",
   // Add more EA role IDs here
 ];
 
