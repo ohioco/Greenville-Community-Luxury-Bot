@@ -42,6 +42,19 @@ for (const file of eventFiles) {
   }
 }
 
+// ── LOAD EMBEDS (message commands) ───────────────────────────────────────────
+const embedFiles = fs.readdirSync("./embeds").filter(f => f.endsWith(".js"));
+for (const file of embedFiles) {
+  const event = require(`./embeds/${file}`);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args, client));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args, client));
+  }
+}
+
+
+
 client.once("clientReady", () => {
   console.log(`🚔 Greenville Community Luxury Online — ${client.user.tag}`);
   client.user.setPresence({
