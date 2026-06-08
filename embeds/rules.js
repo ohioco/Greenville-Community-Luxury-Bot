@@ -3,14 +3,11 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBui
 const STAFF_ROLE = "1508564268415713533";
 const BABY_BLUE  = 0x89CFF0;
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("rules")
-    .setDescription("Post the server rules (Staff only)"),
-
-  async execute(interaction) {
-    if (!interaction.member.roles.cache.has(STAFF_ROLE)) {
-      return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
+  async execute(message) {
+    if (message.author.bot) return;
+    if (message.content.toLowerCase() !== "?alliances") return;
+    if (!message.member.roles.cache.has(STAFF_ROLE)) {
+      return message.reply({ content: "❌ You do not have permission to use this command." });
     }
 
     const embed = new EmbedBuilder()
