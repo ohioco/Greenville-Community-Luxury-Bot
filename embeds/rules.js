@@ -1,7 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1508564268415713533";
 const BABY_BLUE  = 0x89CFF0;
+
+module.exports = {
+  name: "messageCreate",
 
   async execute(message) {
     if (message.author.bot) return;
@@ -66,8 +69,7 @@ Ensure that you follow **[Discord TOS](https://discord.com/terms)** at all times
         ])
     );
 
-    await interaction.deferReply({ ephemeral: true });
-    await interaction.deleteReply();
-    await interaction.channel.send({ embeds: [embed], components: [menu] });
+    await message.delete().catch(() => {});
+    await message.channel.send({ embeds: [embed], components: [menu] });
   }
 };
