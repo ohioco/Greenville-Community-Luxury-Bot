@@ -14,13 +14,12 @@ module.exports = {
 
   async execute(interaction) {
     if (!interaction.member.roles.cache.has(STAFF_ROLE)) {
-      return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
+      return interaction.reply({ content: "❌ You do not have permission to use this command.", flags: 64 });
     }
 
     const message = interaction.options.getString("message");
 
-    await interaction.deferReply({ ephemeral: true });
-    await interaction.deleteReply();
     await interaction.channel.send({ content: message });
+    await interaction.reply({ content: "✅ Message sent.", flags: 64 });
   }
 };
