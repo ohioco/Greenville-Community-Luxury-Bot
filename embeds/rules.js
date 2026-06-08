@@ -1,3 +1,10 @@
+// embeds/rules.js
+// FIX 1: message.member null-check added (crashes if partial member)
+// FIX 2: delete trigger message before sending embed, not after, to avoid
+//         the brief flash where both messages are visible
+// FIX 3: permission denial no longer sends a public reply (deleted quietly)
+// NOTE:  ?rules requires GatewayIntentBits.MessageContent in index.js — see bottom
+
 const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1508564268415713533";
@@ -9,9 +16,18 @@ module.exports = {
   async execute(message) {
     if (message.author.bot) return;
     if (message.content.toLowerCase() !== "?rules") return;
+
+    // FIX: message.member can be null for partial guild members
+    if (!message.member) return;
+
     if (!message.member.roles.cache.has(STAFF_ROLE)) {
-      return message.reply({ content: "❌ You do not have permission to use this command." });
+      // Delete trigger quietly — no public error reply that everyone sees
+      await message.delete().catch(() => {});
+      return;
     }
+
+    // Delete trigger before sending so there's no visible flash
+    await message.delete().catch(() => {});
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Regulations")
@@ -61,15 +77,34 @@ Ensure that you follow **[Discord TOS](https://discord.com/terms)** at all times
         .setPlaceholder("Greenville Community Luxury - Links")
         .addOptions([
           {
-            label: "GVCL TikTok Page",
+            label:       "GVCL TikTok Page",
             description: "This is the official TikTok Page",
-            value: "tiktok",
-            emoji: "📱"
-          }
-        ])
+            value:       "tiktok",
+            emoji:       "📱",
+          },
+        ]),
     );
 
-    await message.delete().catch(() => {});
     await message.channel.send({ embeds: [embed], components: [menu] });
-  }
+  },
 };
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  REQUIRED: add MessageContent to index.js intents or ?rules will never fire
+
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.MessageContent,   // ← ADD THIS
+    ],
+    ...
+  });
+
+  Also enable "Message Content Intent" in your app's Discord Developer Portal
+  under Bot → Privileged Gateway Intents.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
