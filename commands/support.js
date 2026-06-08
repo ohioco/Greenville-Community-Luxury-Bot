@@ -21,9 +21,9 @@ const {
 } = require("discord.js");
 
 const TICKET_TYPES = {
-  general:  { label: "🎫 General Support",  color: 0x5865F2, prefix: "general",  pingStaff: false, description: "Ask a question or get help with a general issue."         },
-  civilian: { label: "📋 Civilian Report",  color: 0xED4245, prefix: "report",   pingStaff: true,  description: "Report a player or in-game incident."                    },
-  staff:    { label: "🛡️ Staff Support",    color: 0xFEE75C, prefix: "staff",    pingStaff: true,  description: "Contact senior staff for staff-related matters."         },
+  general:  { label: "General Assistance",  color: 0x5865F2, prefix: "general",  pingStaff: false, description: "Use this ticket to ask questions about rules or sessions. You may also use this ticket to Request Partnerships, Claim Perks, or for Application Requests. This is not to be used to report someone."   },
+  civilian: { label: "Civilian Report",     color: 0xED4245, prefix: "report",   pingStaff: true,  description: "Use this to report a Civilian who might be breaking the rules. Make sure to gather proof as it is necessary so that the High Command Team can take action."                                             },
+  staff:    { label: "Staff Report",        color: 0xFEE75C, prefix: "staff",    pingStaff: true,  description: "Use this to report a Staff Member who might be breaking the rules. Make sure to gather proof as it is necessary so that the High Command Team can take action."                                         },
 };
 
 // userId -> channelId  (in-memory; resets on bot restart — acceptable for tickets)
@@ -80,25 +80,37 @@ function ticketButtons(claimed = false, claimerName = "") {
 // ── POST PANEL ────────────────────────────────────────────────────────────────
 async function postPanel(channel) {
   const embed = new EmbedBuilder()
-    .setTitle("🎟️  Support Center")
+    .setTitle("Welcome to the Greenville Community Luxury Support Directory!")
     .setDescription(
-      "Need assistance? Choose a category below.\n\n" +
-      "🎫 **General Support** — Questions or general issues\n" +
-      "📋 **Civilian Report** — Report a player or incident\n" +
-      "🛡️ **Staff Support** — Staff-related matters or appeals",
+      "This channel allows you to request assistance, such as General Assistance, a Staff Report, or a Civilian Report. " +
+      "If you are facing any issues within the server, please do not hesitate to make a ticket below!\n\n" +
+
+      "> **General Assistance:**\n" +
+      "> Use this support ticket to ask **questions** about rules or sessions. You may also use this ticket to **Request Partnerships, Claim Perks, or for Application Requests**. " +
+      "This is not to be used to report someone, as there are other tickets to use that for.\n\n" +
+
+      "> **Civilian Report:**\n" +
+      "> Use this to report a **Civilian** who might be breaking the rules. Make sure to gather proof as it is necessary so that the server High Command Team can take action, " +
+      "depending on the severity. If further support is needed, please request the Staff Member to assist you further.\n\n" +
+
+      "> **Staff Report:**\n" +
+      "> Use this to report a **Staff Member** who might be breaking the rules. Make sure to gather proof as it is necessary so that the server High Command Team can take action, " +
+      "depending on the severity. If further support is needed, please request the High Command Member to assist you further.\n\n" +
+
+      "-# If you do not respond to your ticket within **24 hours**, it will be automatically closed.",
     )
-    .setColor(0x2B2D31)
-    .setFooter({ text: "Only open a ticket if you genuinely need help." })
+    .setColor(0x89CFF0)
+    .setFooter({ text: "Greenville Community Luxury™ | Support" })
     .setTimestamp();
 
   const row = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId("support_type_menu")
-      .setPlaceholder("📂  Choose a support category...")
+      .setPlaceholder("Select a support category...")
       .addOptions([
-        { label: "General Support",  description: "Help with questions or issues",        value: "general",  emoji: "🎫" },
-        { label: "Civilian Report",  description: "Report a player or in-game incident",  value: "civilian", emoji: "📋" },
-        { label: "Staff Support",    description: "Contact senior staff",                 value: "staff",    emoji: "🛡️" },
+        { label: "General Assistance",  description: "Questions, partnerships, perks, applications",  value: "general"  },
+        { label: "Civilian Report",     description: "Report a civilian breaking the rules",          value: "civilian" },
+        { label: "Staff Report",        description: "Report a staff member breaking the rules",      value: "staff"    },
       ]),
   );
 
