@@ -5,7 +5,7 @@ const BABY_BLUE  = 0x89CFF0;
 
   async execute(message) {
     if (message.author.bot) return;
-    if (message.content.toLowerCase() !== "?alliances") return;
+    if (message.content.toLowerCase() !== "?rules") return;
     if (!message.member.roles.cache.has(STAFF_ROLE)) {
       return message.reply({ content: "❌ You do not have permission to use this command." });
     }
