@@ -1,16 +1,16 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("alliances")
-    .setDescription("Post the server alliances info (Staff only)"),
+  name: "messageCreate",
 
-  async execute(interaction) {
-    if (!interaction.member.roles.cache.has(STAFF_ROLE)) {
-      return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
+  async execute(message) {
+    if (message.author.bot) return;
+    if (message.content.toLowerCase() !== "?alliances") return;
+    if (!message.member.roles.cache.has(STAFF_ROLE)) {
+      return message.reply({ content: "❌ You do not have permission to use this command." });
     }
 
     const embed1 = new EmbedBuilder()
@@ -34,8 +34,7 @@ However, before partnering with our server, you must meet our partnership requir
       .setFooter({ text: "Greenville Community Luxury™ | Server Alliances" })
       .setTimestamp();
 
-    await interaction.deferReply({ ephemeral: true });
-    await interaction.deleteReply();
-    await interaction.channel.send({ embeds: [embed1, embed2] });
+    await message.delete().catch(() => {});
+    await message.channel.send({ embeds: [embed1, embed2] });
   }
 };
