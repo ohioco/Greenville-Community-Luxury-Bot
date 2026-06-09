@@ -22,8 +22,8 @@ module.exports = {
 
     const reactionsNeeded = interaction.options.getInteger("reactions");
 
-    interaction.client.sessionHost    = interaction.user.id;
-    interaction.client.sessionCoHost  = null;
+    interaction.client.sessionHost      = interaction.user.id;
+    interaction.client.sessionCoHost    = null;
     interaction.client.sessionReactions = reactionsNeeded;
 
     const embed = new EmbedBuilder()
@@ -44,7 +44,10 @@ module.exports = {
 
     await interaction.deferReply({ ephemeral: true });
     await interaction.deleteReply();
-    const message = await interaction.channel.send({ embeds: [embed] });
+    const message = await interaction.channel.send({
+      content: "<@&1508054312075526204>",
+      embeds: [embed],
+    });
     await message.react("✅");
   }
 };
