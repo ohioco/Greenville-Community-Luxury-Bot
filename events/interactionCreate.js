@@ -1,22 +1,28 @@
-// events/interactionCreate.js — improved
-// Changes vs original:
-//   - Support module wired in (select menu + buttons)
-//   - require() calls moved outside execute() so they run once at startup
-//   - deferReply called before any async DB/API work to avoid "interaction
-//     expired" errors on slow machines
-//   - profile_* handlers: early-return guard if interaction already replied
-//     (prevents double-reply crash if Discord sends the button twice)
+// events/interactionCreate.js
+// Fixes applied:
+//   1. [10062] All button/select handlers that do async work now deferReply
+//      before touching DB or Discord API — prevents "Unknown interaction" on
+//      slow machines / Android Termux.
+//   2. [10003] channel.delete() in support close is now wrapped in try/catch
+//      so a race (user already deleted it, or bot lost access) doesn't throw.
+//   3. Deprecated { ephemeral: true } on deferReply replaced with
+//      { flags: MessageFlags.Ephemeral } everywhere.
+//   4. ea.js uses interaction.reply() without defer — fixed here to defer
+//      first so slow Termux startup can't expire it.
+//   5. support_claim uses interaction.update() which doesn't need deferring —
+//      left as-is (update() is its own acknowledgement).
 
 const {
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  MessageFlags,
 } = require("discord.js");
 
 const db      = require("../db");
 const { getLink } = require("../sessionStore");
-const support = require("../commands/support");   // ← support module
+const support = require("../commands/support");
 
 const EA_ROLES = [
   "1510346654241394848",
@@ -36,7 +42,7 @@ module.exports = {
         await command.execute(interaction);
       } catch (err) {
         console.error(err);
-        const reply = { content: "❌ An error occurred.", ephemeral: true };
+        const reply = { content: "❌ An error occurred.", flags: MessageFlags.Ephemeral };
         try {
           if (interaction.replied || interaction.deferred) await interaction.followUp(reply);
           else await interaction.reply(reply);
@@ -47,7 +53,7 @@ module.exports = {
 
     // ── SELECT MENUS ────────────────────────────────────────────────────────
     if (interaction.isStringSelectMenu()) {
-      // Support ticket menu
+      // Support ticket menu (already defers inside handleSelectMenu)
       if (await support.handleSelectMenu(interaction)) return;
 
       // Rules links
@@ -56,7 +62,7 @@ module.exports = {
           tiktok: "https://www.tiktok.com/@gvcl_official?_r=1&_t=ZN-970eRKMAQI2",
         };
         const link = links[interaction.values[0]];
-        if (link) return interaction.reply({ content: `🔗 ${link}`, ephemeral: true });
+        if (link) return interaction.reply({ content: `🔗 ${link}`, flags: MessageFlags.Ephemeral });
       }
       return;
     }
@@ -66,36 +72,40 @@ module.exports = {
 
     const { customId } = interaction;
 
-    // Support ticket buttons (close / claim)
+    // Support ticket buttons (close / claim) — support.js handles its own
+    // defer/reply/update internally, so no defer needed here.
     if (await support.handleButton(interaction)) return;
 
     // ── EA LINK ─────────────────────────────────────────────────────────────
     if (customId.startsWith("ea_link_")) {
+      // FIX: defer before the roles.cache check (cheap, but keeps pattern consistent)
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const hasAccess = EA_ROLES.some(r => interaction.member.roles.cache.has(r));
       if (!hasAccess) {
-        return interaction.reply({ content: "❌ You do not have the required role to access the Early Access link.", ephemeral: true });
+        return interaction.editReply({ content: "❌ You do not have the required role to access the Early Access link." });
       }
       const link = getLink(customId.replace("ea_link_", ""));
-      if (!link) return interaction.reply({ content: "❌ Link has expired or is unavailable.", ephemeral: true });
-      return interaction.reply({ content: `🔗 **Early Access Link:** ${link}`, ephemeral: true });
+      if (!link) return interaction.editReply({ content: "❌ Link has expired or is unavailable." });
+      return interaction.editReply({ content: `🔗 **Early Access Link:** ${link}` });
     }
 
     // ── SESSION LINK ─────────────────────────────────────────────────────────
     if (customId.startsWith("session_link_")) {
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const link = getLink(customId.replace("session_link_", ""));
-      if (!link) return interaction.reply({ content: "❌ Link has expired or is unavailable.", ephemeral: true });
-      return interaction.reply({ content: `🔗 **Session Link:** ${link}`, ephemeral: true });
+      if (!link) return interaction.editReply({ content: "❌ Link has expired or is unavailable." });
+      return interaction.editReply({ content: `🔗 **Session Link:** ${link}` });
     }
 
     // ── REINVITE LINK ────────────────────────────────────────────────────────
     if (customId.startsWith("reinvite_link_")) {
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const link = getLink(customId.replace("reinvite_link_", ""));
-      if (!link) return interaction.reply({ content: "❌ Link has expired or is unavailable.", ephemeral: true });
-      return interaction.reply({ content: `🔗 **New Session Link:** ${link}`, ephemeral: true });
+      if (!link) return interaction.editReply({ content: "❌ Link has expired or is unavailable." });
+      return interaction.editReply({ content: `🔗 **New Session Link:** ${link}` });
     }
 
     // ── PROFILE BUTTONS ──────────────────────────────────────────────────────
-    // Guard: only handle known profile/vehicle/ticket/warrant customIds
     const isProfileButton = (
       customId === "profile_warrants"  ||
       customId === "profile_tickets"   ||
@@ -107,8 +117,8 @@ module.exports = {
     );
     if (!isProfileButton) return;
 
-    // FIX: defer before loading DB to prevent "interaction expired" on slow I/O
-    await interaction.deferReply({ ephemeral: true });
+    // FIX: defer before all DB + embed work to prevent [10062]
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const data = db.load();
     const id   = interaction.user.id;
