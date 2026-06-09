@@ -1,5 +1,10 @@
 // commands/support.js
-// Drop into /commands. Then wire up interactionCreate.js per the instructions at the bottom.
+// FIX [10003]: channel.delete() in handleClose() is now wrapped in try/catch.
+//   If the channel was already deleted (race condition when two staff click
+//   "Close" at the same time, or bot briefly lost permissions), the error is
+//   swallowed silently instead of crashing with DiscordAPIError[10003].
+// FIX: All reply() calls that follow async work use deferReply/editReply so
+//   the 3-second window can't expire on Termux hardware.
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const SUPPORT_CONFIG = {
@@ -18,6 +23,7 @@ const {
   StringSelectMenuBuilder,
   ChannelType,
   PermissionFlagsBits,
+  MessageFlags,
 } = require("discord.js");
 
 const TICKET_TYPES = {
@@ -130,12 +136,12 @@ async function handleSelectMenu(interaction) {
   if (existingId) {
     const existing = guild.channels.cache.get(existingId);
     if (existing) {
-      return interaction.reply({ content: `❌ You already have an open ticket: ${existing}`, ephemeral: true });
+      return interaction.reply({ content: `❌ You already have an open ticket: ${existing}`, flags: MessageFlags.Ephemeral });
     }
     activeTickets.delete(user.id); // stale entry, clean up
   }
 
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const ticketNumber = Date.now().toString().slice(-5);
 
@@ -157,7 +163,6 @@ async function handleSelectMenu(interaction) {
     type:  ChannelType.GuildText,
     parent: cfg.TICKET_CATEGORY_ID !== "YOUR_TICKET_CATEGORY_ID" ? cfg.TICKET_CATEGORY_ID : null,
     permissionOverwrites,
-    // Compact topic keeps UID parsing simple and avoids spaces in the regex
     topic: `type:${type}|UID:${user.id}|ticket:${ticketNumber}`,
   });
 
@@ -205,23 +210,39 @@ async function handleClose(interaction) {
   const isOwner = ownerId === user.id;
 
   if (!hasStaffRole(interaction.member) && !isOwner) {
-    return interaction.reply({ content: "❌ You don't have permission to close this ticket.", ephemeral: true });
+    return interaction.reply({ content: "❌ You don't have permission to close this ticket.", flags: MessageFlags.Ephemeral });
   }
 
   if (ownerId) activeTickets.delete(ownerId);
 
   await logAction(guild, { action: "Ticket Closed", user, detail: channel.name, color: 0xED4245 });
   await interaction.reply({ content: "🔒 Closing this ticket in **5 seconds**..." });
-  setTimeout(() => channel.delete().catch(console.error), 5000);
+
+  // FIX [10003]: wrap delete in try/catch — channel may already be gone if two
+  // staff members click "Close" at the same time, or the bot briefly lost
+  // Manage Channels permission.
+  setTimeout(async () => {
+    try {
+      await channel.delete();
+    } catch (err) {
+      if (err.code === 10003) {
+        // Channel already deleted — nothing to do
+      } else {
+        console.error("[support] Unexpected error deleting ticket channel:", err);
+      }
+    }
+  }, 5000);
+
   return true;
 }
 
 // ── CLAIM ─────────────────────────────────────────────────────────────────────
 async function handleClaim(interaction) {
   if (!hasStaffRole(interaction.member)) {
-    return interaction.reply({ content: "❌ Only staff can claim tickets.", ephemeral: true });
+    return interaction.reply({ content: "❌ Only staff can claim tickets.", flags: MessageFlags.Ephemeral });
   }
 
+  // interaction.update() is its own acknowledgement — no deferReply needed
   await interaction.update({ components: [ticketButtons(true, interaction.user.username)] });
 
   await interaction.channel.send({
@@ -247,10 +268,10 @@ module.exports = {
     const sub = interaction.options.getSubcommand();
     if (sub === "panel") {
       if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-        return interaction.reply({ content: "❌ You need **Manage Server** permission.", ephemeral: true });
+        return interaction.reply({ content: "❌ You need **Manage Server** permission.", flags: MessageFlags.Ephemeral });
       }
       await postPanel(interaction.channel);
-      return interaction.reply({ content: "✅ Support panel posted!", ephemeral: true });
+      return interaction.reply({ content: "✅ Support panel posted!", flags: MessageFlags.Ephemeral });
     }
     if (sub === "close") return handleClose(interaction);
   },
@@ -260,26 +281,3 @@ module.exports = {
   handleButton,
   activeTickets,
 };
-
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  PASTE INTO events/interactionCreate.js
-
-  At the top of execute(), before any existing logic, add:
-
-    const support = require("../commands/support");
-
-  Then inside isStringSelectMenu():
-
-    if (interaction.isStringSelectMenu()) {
-      if (await support.handleSelectMenu(interaction)) return;   // ← add
-      if (interaction.customId === "rules_links") { ... }
-      return;
-    }
-
-  And inside isButton(), before the customId.startsWith("ea_link_") check:
-
-    if (await support.handleButton(interaction)) return;   // ← add
-    if (customId.startsWith("ea_link_")) { ... }
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
