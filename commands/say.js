@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 const STAFF_ROLE = "1510346654241394848";
 
@@ -13,13 +13,15 @@ module.exports = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     if (!interaction.member.roles.cache.has(STAFF_ROLE)) {
-      return interaction.reply({ content: "❌ You do not have permission to use this command.", flags: 64 });
+      return interaction.editReply({ content: "❌ You do not have permission to use this command." });
     }
 
     const message = interaction.options.getString("message");
 
     await interaction.channel.send({ content: message });
-    await interaction.reply({ content: "✅ Message sent.", flags: 64 });
+    await interaction.editReply({ content: "✅ Message sent." });
   }
 };
