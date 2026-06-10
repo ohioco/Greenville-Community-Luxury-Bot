@@ -3,7 +3,8 @@ const {
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonStyle
+  ButtonStyle,
+  MessageFlags
 } = require("discord.js");
 const { saveLink } = require("../sessionStore");
 
@@ -24,8 +25,10 @@ module.exports = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply();
+
     if (!interaction.member.roles.cache.has(STAFF_ROLE)) {
-      return interaction.reply({ content: "❌ You do not have permission to use this command.", ephemeral: true });
+      return interaction.editReply({ content: "❌ You do not have permission to use this command.", flags: MessageFlags.Ephemeral });
     }
 
     const link    = interaction.options.getString("link");
@@ -61,6 +64,6 @@ module.exports = {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.reply({ embeds: [embed], components: [row] });
+    await interaction.editReply({ embeds: [embed], components: [row] });
   }
 };
