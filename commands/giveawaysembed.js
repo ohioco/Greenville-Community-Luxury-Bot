@@ -16,13 +16,12 @@ module.exports = {
     }
 
     const embed = new EmbedBuilder()
-      .setTitle("🎉 Welcome to Greenville Community Luxury Giveaways!")
+      .setTitle("__**Welcome to Greenville Community Luxury Giveaways!**__")
       .setColor(BABY_BLUE)
       .setDescription(
-        `Welcome to **Greenville Community Luxury's** Server Giveaways. Within our server, we strive to give back to our community by hosting regular giveaways of **Robux**, **Server Perks**, **Discord Nitro** and more!\n\nAll regular giveaways can be found within this channel. If you're interested in sponsoring your server, please open a ticket.\n\n> ⚠️ **Please Note:** Using __alternate accounts__ may result in a __ban__. If you do not believe you were using alternate accounts, please let us know before we take action.\n\nIf you have any questions or concerns, please let us know!`
+        `Welcome to **Greenville Community Luxury's** Server Giveaways. Within our server, we strive to give back to our community by hosting regular giveaways of Robux, Server Perks, Discord Nitro and More! All regular giveaways can be found within this channel if you're interested in sponsoring your server, please open a ticket.\n\n-# **Please Note:** That using __alternate accounts__ may result in __ban__ if you do not believe you were using alternate accounts please let us know before we make an action\n**If you have any questions or concerns, please let us know!**\n-# Greenville Community Luxury™`
       )
-      .setFooter({ text: "Greenville Community Luxury™" })
-      .setTimestamp();
+      .setFooter({ text: "Greenville Community Luxury™" });
 
     await interaction.channel.send({ embeds: [embed] });
     await interaction.editReply({ content: "✅ Giveaways embed sent." });
