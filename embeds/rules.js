@@ -32,7 +32,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Regulations")
       .setColor(BABY_BLUE)
-      .setImage("https://i.ibb.co/MxGZYZ0b/Untitled137-20260602204131.png")
+      .setImage("https://i.ibb.co/qwGZFJ1/Untitled156-20260613211624.png")
       .setDescription(
 `Welcome to <:flower:1515280493472518185> **Greenville Community Luxury** <:flower:1515280493472518185> ! We are a third-party Greenville Roleplay Server, which is civilian-centred to ensure a smooth and professional civilian experience within our server. Our server has many things to offer, including regular special roleplays, enabling our players to fully immerse themselves in the world of Greenville Roleplay!
 
