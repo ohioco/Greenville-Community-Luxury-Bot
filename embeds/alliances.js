@@ -9,7 +9,7 @@ const { EmbedBuilder } = require("discord.js");
 // ⚠️  This uses a DIFFERENT role ID from rules.js (1510346654241394848).
 //     If that's intentional (different staff tiers), leave it.
 //     If it should be the same role as rules.js, change to: "1508564268415713533"
-const STAFF_ROLE = "1508564268415713533";
+const STAFF_ROLE = "1510346654241394848";
 const BABY_BLUE  = 0x89CFF0;
 
 module.exports = {
