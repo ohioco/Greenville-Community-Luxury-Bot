@@ -43,10 +43,10 @@ module.exports = {
 
 However, before partnering with our server, you must meet our partnership requirements. All relevant partnership information is listed below.
 
-➜ Active Community Members.
-➜ Greenville or Roblox Roleplay Related.
-➜ Good Server & Management Reputation.
-➜ Organized Server & Departments.`
+<:Replyarrow:1515280827544764426> Active Community Members.
+<:Replyarrow:1515280827544764426> Greenville or Roblox Roleplay Related.
+<:Replyarrow:1515280827544764426> Good Server & Management Reputation.
+<:Replyarrow:1515280827544764426> Organized Server & Departments.`
       )
       .setFooter({ text: "Greenville Community Luxury™ | Server Alliances" })
       .setTimestamp();
