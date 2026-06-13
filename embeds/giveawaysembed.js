@@ -18,12 +18,11 @@ module.exports = {
 
     message.delete().catch(() => {});
 
-const embed1 = new EmbedBuilder()
-      .setTitle("Greenville Community Luxury™ | Server Alliances")
+    const embed1 = new EmbedBuilder()
+      .setTitle("Greenville Community Luxury™ | Giveaways")
       .setColor(BABY_BLUE)
       .setImage("https://i.ibb.co/Pv6K4k9h/Untitled156-20260613230105.png");
 
-    
     const embed2 = new EmbedBuilder()
       .setColor(BABY_BLUE)
       .setDescription(
@@ -39,4 +38,5 @@ Welcome to **Greenville Community Luxury's** Server Giveaways. Within our server
       .setTimestamp();
 
     await message.channel.send({ embeds: [embed1, embed2] });
+  },
 };
