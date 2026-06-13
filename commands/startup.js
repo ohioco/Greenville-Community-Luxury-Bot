@@ -48,6 +48,6 @@ module.exports = {
       content: "<@&1508054312075526204>",
       embeds: [embed],
     });
-    await message.react("✅");
+    await message.react("<:checkmark:1515280517405212722> ");
   }
 };
