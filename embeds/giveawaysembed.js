@@ -18,7 +18,13 @@ module.exports = {
 
     message.delete().catch(() => {});
 
-    const embed = new EmbedBuilder()
+const embed1 = new EmbedBuilder()
+      .setTitle("Greenville Community Luxury™ | Server Alliances")
+      .setColor(BABY_BLUE)
+      .setImage("https://i.ibb.co/Pv6K4k9h/Untitled156-20260613230105.png");
+
+    
+    const embed2 = new EmbedBuilder()
       .setColor(BABY_BLUE)
       .setDescription(
 `__**<:Bell:1515277260788203620> Welcome to Greenville Community Luxury Giveaways! <:Bell:1515277260788203620>**__
@@ -32,6 +38,6 @@ Welcome to **Greenville Community Luxury's** Server Giveaways. Within our server
       .setFooter({ text: "Greenville Community Luxury™ | Giveaways" })
       .setTimestamp();
 
-    await message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed1] [embed2] });
   },
 };
