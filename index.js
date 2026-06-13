@@ -61,7 +61,7 @@ client.once("clientReady", () => {
   console.log(`🚔 Greenville Community Luxury Online — ${client.user.tag}`);
   client.user.setPresence({
     activities: [],
-    status: "online"
+    status: "dnd"
   });
 });
 
