@@ -59,7 +59,7 @@ module.exports = {
       // Rules links
       if (interaction.customId === "rules_links") {
         const links = {
-          tiktok: "https://www.tiktok.com/@bbgvrp?_r=1&_t=ZN-970eRKMAQI2",
+          tiktok: "https://www.tiktok.com/@gvcl_official?_r=1&_t=ZN-97Aiv3CNiAI",
         };
         const link = links[interaction.values[0]];
         if (link) return interaction.reply({ content: `🔗 ${link}`, flags: MessageFlags.Ephemeral });
