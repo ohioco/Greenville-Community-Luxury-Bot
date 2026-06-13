@@ -33,7 +33,7 @@ module.exports = {
     const embed1 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
       .setColor(BABY_BLUE)
-      .setImage("https://i.ibb.co/1w0QyH6/Untitled137-20260531234110.png");
+      .setImage("https://i.ibb.co/R4cgvv83/Untitled156-20260613225207.png");
 
     const embed2 = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Alliances")
