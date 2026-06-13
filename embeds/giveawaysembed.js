@@ -38,6 +38,5 @@ Welcome to **Greenville Community Luxury's** Server Giveaways. Within our server
       .setFooter({ text: "Greenville Community Luxury™ | Giveaways" })
       .setTimestamp();
 
-    await message.channel.send({ embeds: [embed1] [embed2] });
-  },
+    await message.channel.send({ embeds: [embed1, embed2] });
 };
