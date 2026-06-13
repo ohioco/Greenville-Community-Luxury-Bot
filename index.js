@@ -11,7 +11,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
   ],
   
-  partials: [Partials.Message, Partials.Reaction]
+  partials: [Partials.Message, Partials.Reaction, Partials.Channel]
 });
 
 client.commands = new Collection();
