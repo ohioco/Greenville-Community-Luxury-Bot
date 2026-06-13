@@ -3,6 +3,7 @@
 // FIX 2: delete trigger message before sending embed, not after, to avoid
 //         the brief flash where both messages are visible
 // FIX 3: permission denial no longer sends a public reply (deleted quietly)
+// FIX 4: embed send now runs regardless of whether delete succeeds
 // NOTE:  ?rules requires GatewayIntentBits.MessageContent in index.js — see bottom
 
 const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
@@ -26,8 +27,8 @@ module.exports = {
       return;
     }
 
-    // Delete trigger before sending so there's no visible flash
-    await message.delete().catch(() => {});
+    // Delete trigger — catch error so embed still sends even if delete fails
+    message.delete().catch(() => {});
 
     const embed = new EmbedBuilder()
       .setTitle("Greenville Community Luxury™ | Server Regulations")
@@ -38,34 +39,34 @@ module.exports = {
 
 __ <:manual:1515280559692054568> :**Greenville Community Luxury™ | Server Regulations** <:manual:1515280559692054568> __
 
-<:Replyarrow:1515280827544764426>**Rule __1__ <:Arrow:1515278896545665084>  Respectful Conduct:**
+**Rule __1__ <:Arrow:1515278896545665084>  Respectful Conduct:**
 All members must treat each other with utmost respect, fostering an atmosphere of courtesy and inclusivity. Discrimination, hate speech, and personal attacks are strictly prohibited. Regardless of differences, maintaining a respectful and welcoming environment is paramount.
 
-<:Replyarrow:1515280827544764426>**Rule __2__ <:Arrow:1515278896545665084> No Spamming:**
+**Rule __2__ <:Arrow:1515278896545665084> No Spamming:**
 To ensure a clutter-free and organised communication experience, refrain from sending consecutive messages or posting irrelevant content. Only share information that aligns with the channel's purpose, contributing to meaningful discussions and interactions.
 
-<:Replyarrow:1515280827544764426>**Rule __3__ <:Arrow:1515278896545665084> No Inappropriate Content:**
+**Rule __3__ <:Arrow:1515278896545665084> No Inappropriate Content:**
 Sharing or posting sexually explicit, suggestive, violent, or age-inappropriate content is strictly forbidden. It is important to maintain a safe and comfortable space for members of all ages and backgrounds.
 
-<:Replyarrow:1515280827544764426>**Rule __4__ <:Arrow:1515278896545665084> Confidentiality:**
+**Rule __4__ <:Arrow:1515278896545665084> Confidentiality:**
 Respect the privacy of all individuals within the community. Refrain from disclosing personal information, including phone numbers, addresses, or any other sensitive details about yourself or others. Protecting personal privacy is a priority.
 
-<:Replyarrow:1515280827544764426>****Rule __5__ <:Arrow:1515278896545665084> No Unauthorized Advertising:**
+**Rule __5__ <:Arrow:1515278896545665084> No Unauthorized Advertising:**
 Prior consent from server moderators or owners is necessary before promoting other Discord servers, websites, or services. Unsolicited advertising disrupts the community's focus and integrity. Obtain permission before sharing external content.
 
-<:Replyarrow:1515280827544764426>****Rule __6__ <:Arrow:1515278896545665084> Channel-Specific Guidelines:**
+**Rule __6__ <:Arrow:1515278896545665084> Channel-Specific Guidelines:**
 In addition to the server-wide rules, each channel may have its specific guidelines. Familiarise yourself with and adhere to these guidelines to ensure a harmonious and well-organised environment within each channel.
 
-<:Replyarrow:1515280827544764426>****Rule __7__ <:Arrow:1515278896545665084> No Hacking or Cheating:**
+**Rule __7__ <:Arrow:1515278896545665084> No Hacking or Cheating:**
 Engaging in hacking, cheating, or exploiting software or game vulnerabilities is strictly forbidden. Uphold fair play and maintain the integrity of the community's activities. Such actions undermine the experience for others and will not be tolerated.
 
-<:Replyarrow:1515280827544764426>****Rule __8__ <:Arrow:1515278896545665084>  No Impersonation:**
+**Rule __8__ <:Arrow:1515278896545665084>  No Impersonation:**
 Avoid impersonating other members, staff, or well-known figures within the community. Misrepresenting oneself or others can lead to confusion, distrust, and disruptions. Be genuine and use your own identity in all interactions.
 
-<:Replyarrow:1515280827544764426>****Rule __9__ <:Arrow:1515278896545665084> Staff Compliance:**
+**Rule __9__ <:Arrow:1515278896545665084> Staff Compliance:**
 Promptly and respectfully follow instructions given by moderators and server staff. They are entrusted with maintaining order and ensuring a positive environment. Cooperation with staff contributes to a smooth and enjoyable community experience.
 
-<:Replyarrow:1515280827544764426>****Rule __10__ <:Arrow:1515278896545665084> Discord Terms of Service:**
+**Rule __10__ <:Arrow:1515278896545665084> Discord Terms of Service:**
 Ensure that you follow **[Discord TOS](https://discord.com/terms)** at all times within our server. Breaking Terms of Service will result in severe disciplinary action taken against you along with a report to Discord, if it is deemed necessary.`    )
       .setFooter({ text: "Greenville Community Luxury™ | Server Regulations" })
       .setTimestamp();
